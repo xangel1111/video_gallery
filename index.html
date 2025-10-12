@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galería tipo Pinterest - Videos Google Drive</title>
+  <title>Galería tipo Pinterest - Videos Cloudinary</title>
   <style>
     body {
       background: #111;
@@ -82,10 +82,10 @@
       pointer-events: all;
     }
 
-    .modal iframe {
+    .modal video {
       width: 90vw;
-      height: 80vh;
-      border: none;
+      height: auto;
+      max-height: 80vh;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
       background: #000;
@@ -121,55 +121,37 @@
   <!-- Modal -->
   <div class="modal" id="videoModal">
     <div class="modal-close" id="closeModal">&times;</div>
-    <iframe id="videoFrame" src="" allow="autoplay"></iframe>
+    <video id="videoPlayer" controls autoplay></video>
   </div>
 
   <script>
     const videos = [
       { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/1.jpg'
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301228/ktznetyb7r3w9cjzmmuw.jpg'
       },
       { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/2.jpg'
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301215/eabxvxn4e0fcygloitks.jpg'
       },
       { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/1.jpg'
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301168/oehrcanqzgmeibh1ro03.jpg'
       },
       { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/2.jpg'
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301215/eabxvxn4e0fcygloitks.jpg'
       },
       { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/3.jpg'
-      },
-      { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/3.jpg'
-      },
-      { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/2.jpg'
-      },
-      { 
-        link: 'https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/view?usp=sharing',
-        thumbnail: 'thumbs/1.jpg'
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301155/vjvvoh4vpc6xlfgdfeeu.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301168/oehrcanqzgmeibh1ro03.jpg'
       },
     ];
 
     const gallery = document.getElementById('videoGallery');
     const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('videoFrame');
+    const videoPlayer = document.getElementById('videoPlayer');
     const closeBtn = document.getElementById('closeModal');
-
-    // Función para convertir enlace de Drive a formato embed
-    function toDrivePreviewURL(url) {
-      const match = url.match(/\/d\/([^/]+)\//);
-      return match ? `https://drive.google.com/file/d/${match[1]}/preview` : null;
-    }
 
     // Crear cards
     videos.forEach(video => {
@@ -178,24 +160,24 @@
 
       const img = document.createElement('img');
       img.src = video.thumbnail;
+      img.loading = 'lazy';
       img.alt = 'Miniatura del video';
       card.appendChild(img);
       gallery.appendChild(card);
 
-      // Click → abrir modal
+      // Click → abrir modal con video
       card.addEventListener('click', () => {
-        const embedURL = toDrivePreviewURL(video.link);
-        if (embedURL) {
-          iframe.src = embedURL;
-          modal.classList.add('active');
-        }
+        videoPlayer.src = video.link;
+        modal.classList.add('active');
+        videoPlayer.play();
       });
     });
 
     // Cerrar modal
     const closeModal = () => {
       modal.classList.remove('active');
-      iframe.src = ''; // Detiene el video
+      videoPlayer.pause();
+      videoPlayer.src = ''; // liberar memoria
     };
 
     closeBtn.addEventListener('click', closeModal);

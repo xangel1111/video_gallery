@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir imagen y video a Cloudinary</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #eee; text-align: center; padding: 2rem; }
+    input { margin: 1rem 0; }
+    .preview { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; }
+    img, video { width: 250px; border-radius: 10px; box-shadow: 0 0 10px #333; }
+  </style>
+</head>
+<body>
+  <h2>Subir archivos a Cloudinary (Dynamic Folders)</h2>
+
+  <div>
+    <h3>Imagen (irá a /thumbs)</h3>
+    <input type="file" id="imgInput" accept="image/*" />
+    <button onclick="uploadImage()">Subir Imagen</button>
+  </div>
+
+  <div>
+    <h3>Video (irá a /videos)</h3>
+    <input type="file" id="vidInput" accept="video/*" />
+    <button onclick="uploadVideo()">Subir Video</button>
+  </div>
+
+  <div class="preview">
+    <div>
+      <h4>Thumbnail</h4>
+      <img id="imgPreview" src="" alt="Preview imagen" />
+    </div>
+    <div>
+      <h4>Video</h4>
+      <video id="vidPreview" controls></video>
+    </div>
+  </div>
+
+  <script>
+    const cloudName = "dade42bjv";           // 🔹 tu Cloud Name
+    const uploadPreset = "my_preset";  // 🔹 reemplaza con tu unsigned upload preset
+
+    async function uploadToCloudinary(file, folderPath, resourceType) {
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+
+      // En Dynamic Folder Mode usamos public_id con la ruta completa:
+      const nombreBase = file.name.split(".")[0];
+      formData.append("public_id", `${folderPath}/${nombreBase}`);
+
+      const res = await fetch(url, { method: "POST", body: formData });
+      const data = await res.json();
+      console.log("Respuesta Cloudinary:", data);
+      return data.secure_url;
+    }
+
+    async function uploadImage() {
+      const file = document.getElementById("imgInput").files[0];
+      if (!file) return alert("Selecciona una imagen");
+      const url = await uploadToCloudinary(file, "thumbs", "image");
+      document.getElementById("imgPreview").src = url;
+    }
+
+    async function uploadVideo() {
+      const file = document.getElementById("vidInput").files[0];
+      if (!file) return alert("Selecciona un video");
+      const url = await uploadToCloudinary(file, "videos", "video");
+      document.getElementById("vidPreview").src = url;
+    }
+  </script>
+</body>
+</html>
