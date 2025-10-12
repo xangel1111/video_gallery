@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="videoContainer" style="max-width:640px; cursor:pointer;">
+  <iframe 
+    id="driveVideo"
+    src="https://drive.google.com/file/d/17JkNlcrGmp-M03OSTlgasOU9heO_NBvA/preview"
+    width="640" height="360"
+    allow="autoplay"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<script>
+  const videoContainer = document.getElementById("videoContainer");
+  const iframe = document.getElementById("driveVideo");
+
+  videoContainer.addEventListener("click", () => {
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) { // Safari
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) { // IE11
+      iframe.msRequestFullscreen();
+    }
+  });
+</script>
+    
+</body>
+</html>
+
