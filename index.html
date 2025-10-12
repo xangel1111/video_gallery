@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Galería de Videos con Miniaturas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .gallery {
+      display: flex;           /* cambio grid por flex para control más exacto */
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center; /* centra las cajas */
+      margin-top: 40px;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      width: 320px;           /* ancho fijo igual al ancho de miniatura */
+      box-sizing: border-box;
+    }
+
+    .thumb {
+      width: 100%;            /* la imagen toma todo el ancho de la tarjeta */
+      display: block;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .video-card:hover .thumb {
+      transform: scale(1.05);
+    }
+    .video-title {
+      margin-top: 8px;
+      font-weight: bold;
+      color: #222;
+      text-align: center;
+    }
+    iframe {
+      width: 100%;
+      height: 315px;
+      border: none;
+      border-radius: 8px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Galería de Videos con Miniaturas</h1>
+  <div class="gallery" id="videoGallery"></div>
+
+  <script>
+    const videos = [
+      {
+        title: 'Pieza 1 - funcionamiento',
+        fbLink: 'https://www.facebook.com/100027633962955/videos/pcb.1689808345020854/4064012317193623',
+        thumbnail: 'thumbs/1.jpg'  // Cambia por la ruta real de tu miniatura
+      },
+      {
+        title: 'Pieza 2 - operación',
+        fbLink: 'https://www.facebook.com/61574452511932/videos/pcb.1689790958355926/2511209062597426',
+        thumbnail: 'thumbs/2.jpg'
+      },
+      {
+        title: 'Pieza 3 - proceso',
+        fbLink: 'https://www.facebook.com/61574452511932/videos/pcb.1689790615022627/1184834167033087',
+        thumbnail: 'thumbs/3.jpg'
+      }
+    ];
+
+    const container = document.getElementById('videoGallery');
+
+    videos.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+
+      // Crear imagen miniatura
+      const img = document.createElement('img');
+      img.src = video.thumbnail;
+      img.alt = video.title;
+      img.className = 'thumb';
+
+      // Título
+      const title = document.createElement('div');
+      title.className = 'video-title';
+      title.textContent = video.title;
+
+      // Al hacer clic en la miniatura, reemplazar con iframe
+      img.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(video.fbLink)}&show_text=0&width=560`;
+        iframe.allowFullscreen = true;
+
+        card.innerHTML = ''; // Limpiar contenido actual
+        card.appendChild(iframe);
+        card.appendChild(title);
+      });
+
+      card.appendChild(img);
+      card.appendChild(title);
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>
