@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galería tipo Pinterest - Cloudinary API</title>
+  <title>Galería tipo Pinterest - Videos Cloudinary</title>
   <style>
     body {
       background: #111;
@@ -112,19 +112,11 @@
     .modal-close:hover {
       background: rgba(255,255,255,0.2);
     }
-
-    .loading {
-      color: #ccc;
-      text-align: center;
-      font-size: 1.2rem;
-      margin-top: 3rem;
-    }
   </style>
 </head>
 <body>
 
   <div class="gallery" id="videoGallery"></div>
-  <div class="loading" id="loading">Cargando videos...</div>
 
   <!-- Modal -->
   <div class="modal" id="videoModal">
@@ -133,58 +125,64 @@
   </div>
 
   <script>
+    const videos = [
+      { 
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301228/ktznetyb7r3w9cjzmmuw.jpg'
+      },
+      { 
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301215/eabxvxn4e0fcygloitks.jpg'
+      },
+      { 
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301168/oehrcanqzgmeibh1ro03.jpg'
+      },
+      { 
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301950/d71oifrhmz9hg6zwmbrx.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301215/eabxvxn4e0fcygloitks.jpg'
+      },
+      { 
+        link: 'https://res.cloudinary.com/dade42bjv/video/upload/v1760301155/vjvvoh4vpc6xlfgdfeeu.mp4',
+        thumbnail: 'https://res.cloudinary.com/dade42bjv/image/upload/v1760301168/oehrcanqzgmeibh1ro03.jpg'
+      },
+    ];
+
     const gallery = document.getElementById('videoGallery');
     const modal = document.getElementById('videoModal');
     const videoPlayer = document.getElementById('videoPlayer');
     const closeBtn = document.getElementById('closeModal');
-    const loading = document.getElementById('loading');
 
-    const API_URL = 'http://ec2-18-118-78-238.us-east-2.compute.amazonaws.com:4000/api/products';
+    // Crear cards
+    videos.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'card';
 
-    async function cargarGaleria() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        loading.style.display = 'none';
+      const img = document.createElement('img');
+      img.src = video.thumbnail;
+      img.loading = 'lazy';
+      img.alt = 'Miniatura del video';
+      card.appendChild(img);
+      gallery.appendChild(card);
 
-        data.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card';
-
-          const img = document.createElement('img');
-          img.src = item.image_url;
-          img.loading = 'lazy';
-          img.alt = 'Miniatura del video';
-          card.appendChild(img);
-          gallery.appendChild(card);
-
-          // Click → abrir modal
-          card.addEventListener('click', () => {
-            videoPlayer.src = item.video_url;
-            modal.classList.add('active');
-            videoPlayer.play();
-          });
-        });
-
-      } catch (error) {
-        loading.textContent = 'Error al cargar los videos';
-        console.error('Error:', error);
-      }
-    }
-
-    // Ejecutar al cargar la página
-    cargarGaleria();
+      // Click → abrir modal con video
+      card.addEventListener('click', () => {
+        videoPlayer.src = video.link;
+        modal.classList.add('active');
+        videoPlayer.play();
+      });
+    });
 
     // Cerrar modal
     const closeModal = () => {
       modal.classList.remove('active');
       videoPlayer.pause();
-      videoPlayer.src = '';
+      videoPlayer.src = ''; // liberar memoria
     };
 
     closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
   </script>
 
 </body>
